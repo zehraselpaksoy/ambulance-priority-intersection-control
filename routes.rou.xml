@@ -1,24 +1,70 @@
-<routes>
-    <!-- Araç tipi tanımı -->
-    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="4.5" maxSpeed="13.89" color="yellow"/>
 
-    <!-- 1. Batıdan girip Doğuya giden akış -->
-    <flow id="flow_w_e" type="car" begin="0" end="1000" probability="0.25">
+<routes>
+
+    <!-- NORMAL ARAÇ TİPİ -->
+    <vType id="car"
+           accel="2.6"
+           decel="4.5"
+           sigma="0.5"
+           length="4.5"
+           maxSpeed="13.89"
+           color="yellow"/>
+
+    <!-- AMBULANS ARAÇ TİPİ -->
+    <vType id="ambulance"
+           vClass="emergency"
+           accel="3.0"
+           decel="4.5"
+           sigma="0"
+           length="5"
+           maxSpeed="20"
+           color="red"/>
+
+    <!-- NORMAL TRAFİK AKIŞLARI -->
+
+    <!-- 1. Batıdan Doğuya -->
+    <flow id="flow_w_e"
+          type="car"
+          begin="0"
+          end="1000"
+          probability="0.25">
         <route edges="-E3 E0"/>
     </flow>
 
-    <!-- 2. Doğudan girip Batıya giden akış -->
-    <flow id="flow_e_w" type="car" begin="0" end="1000" probability="0.25">
+    <!-- 2. Doğudan Batıya -->
+    <flow id="flow_e_w"
+          type="car"
+          begin="0"
+          end="1000"
+          probability="0.25">
         <route edges="-E0 E3"/>
     </flow>
 
-    <!-- 3. Kuzeyden girip Güneye giden akış -->
-    <flow id="flow_n_s" type="car" begin="0" end="1000" probability="0.15">
+    <!-- 3. Kuzeyden Güneye -->
+    <flow id="flow_n_s"
+          type="car"
+          begin="0"
+          end="1000"
+          probability="0.15">
         <route edges="-E1 E2"/>
     </flow>
 
-    <!-- 4. Güneyden girip Kuzeye giden akış -->
-    <flow id="flow_s_n" type="car" begin="0" end="1000" probability="0.15">
+    <!-- 4. Güneyden Kuzeye -->
+    <flow id="flow_s_n"
+          type="car"
+          begin="0"
+          end="1000"
+          probability="0.15">
         <route edges="-E2 E1"/>
     </flow>
+
+    <!-- TEK AMBULANS SENARYOSU -->
+
+    <!-- Batıdan gelip Doğuya giden ambulans -->
+    <vehicle id="ambulance_w_e"
+             type="ambulance"
+             depart="20">
+        <route edges="-E3 E0"/>
+    </vehicle>
+
 </routes>
