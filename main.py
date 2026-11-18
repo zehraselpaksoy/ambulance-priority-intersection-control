@@ -1,4 +1,3 @@
-
 import traci
 
 # Ambulans algılama fonksiyonu
@@ -10,7 +9,7 @@ from trafik_isigi_kontrol import (
     oncelik_sistemini_guncelle
 )
 
-# TEST MODU: ÖNCELİKLİ SİSTEM
+# TEST MODU: ÖNCELİKLİ SİSTEM VE UÇ SENARYO TESTİ
 # Ambulans algılandığında trafik ışıkları kontrol edilir.
 
 # Ambulans bilgileri
@@ -41,6 +40,30 @@ try:
 
         # Simülasyonu bir adım ilerlet
         traci.simulationStep()
+
+        # =========================================================================
+        # ZEHRA ASEL - UÇ SENARYO & KAVŞAK TIKANIKLIĞI TESTİ (GRIDLOCK TEST)
+        # 10. adımda ambulansın bulunduğu yola (-E3 -> E0) araç kuyruğu ekler.
+        # =========================================================================
+        if adim == 10:
+            print("\n🚨 [ZEHRA - UÇ SENARYO TESTİ] Ambulansın önüne araç kuyruğu yığılıyor...")
+            
+            # Doğru rota olan -E3 -> E0 rotasını SUMO'ya tanımlıyoruz
+            try:
+                traci.route.add("zehra_kuyruk_rotasi", ["-E3", "E0"])
+            except Exception:
+                pass
+
+            for i in range(5):
+                try:
+                    traci.vehicle.add(
+                        vehID=f"kuyruk_araci_{i}",
+                        routeID="zehra_kuyruk_rotasi",
+                        typeID="car",
+                        departPos=str(i * 8)
+                    )
+                except Exception as e:
+                    pass
 
         # Çarpışma güvenlik kontrolü
         carpisma_sayisi = (

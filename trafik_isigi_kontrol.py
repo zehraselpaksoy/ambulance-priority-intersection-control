@@ -1,9 +1,8 @@
-
 import traci
 
 # KAVŞAK AYARLARI
 KAVSAK_ID = "J0"
-ALGILAMA_MESAFESI = 50
+ALGILAMA_MESAFESI = 120
 
 AMBULANS_YESIL_FAZI = 0
 AMBULANS_SARI_FAZI = 1
@@ -83,17 +82,31 @@ def ambulansa_yesil_ver():
     print("Ambulans yönüne yeşil ışık verildi.")
 
 
-# Ambulans kavşağı geçti mi?
+# Su Nur - Ambulans kavşaktan tamamen ayrıldı mı?
 def ambulans_gecti_mi(ambulans_id):
-
     araclar = traci.vehicle.getIDList()
-
     if ambulans_id not in araclar:
-        return False
+        return True  # Ambulans simülasyondan tamamen çıktıysa geçmiş sayılır.
 
     yol = traci.vehicle.getRoadID(ambulans_id)
+    
+    # Çıkış yolları: Giriş yolları (-E0, -E1, -E2, -E3) dışındaki pozitif yollar (E0, E1, E2, E3)
+    cikis_yollari = ["E0", "E1", "E2", "E3"]
+    return yol in cikis_yollari 
 
-    return yol == "E0"
+
+# ROJIN - Faz Toparlama ve Süre Dengesi
+def faz_toparla_ve_normale_don():
+    traci.trafficlight.setProgram(KAVSAK_ID, "0")
+    
+    # Kırmızıda en çok bekleyen yan yönlerin fazı (DIGER_YESIL_FAZI = 2)
+    traci.trafficlight.setPhase(KAVSAK_ID, DIGER_YESIL_FAZI)
+    
+    # Bekleyen yönlerin mağduriyetini gidermek için yeşil süresine telafi bonusu ekleniyor
+    TOPARLAMA_YESIL_SURESI = 35 
+    traci.trafficlight.setPhaseDuration(KAVSAK_ID, TOPARLAMA_YESIL_SURESI)
+    
+    print(f"Faz toparlama aktif: Bekleyen yönlere {TOPARLAMA_YESIL_SURESI} saniyelik öncelikli yeşil süre sağlandı.")
 
 
 # Yeşil ışığı koru
@@ -195,15 +208,8 @@ def oncelik_sistemini_guncelle(bilgi, ambulans_id):
 
         if zaman - asamaya_giris_zamani >= KIRMIZI_SURESI:
 
-            traci.trafficlight.setProgram(KAVSAK_ID, "0")
-
-            traci.trafficlight.setPhase(
-                KAVSAK_ID, DIGER_YESIL_FAZI
-            )
-
-            traci.trafficlight.setPhaseDuration(
-                KAVSAK_ID, 35
-            )
+            # Rojin'in faz toparlama fonksiyonu burada devreye giriyor
+            faz_toparla_ve_normale_don()
 
             gecis_asamasi = "NORMAL"
             oncelik_tamamlandi = True

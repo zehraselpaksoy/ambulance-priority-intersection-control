@@ -1,4 +1,3 @@
-
 import traci
 
 # Ambulansların kavşağa giriş yolları
