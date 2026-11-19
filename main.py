@@ -12,6 +12,12 @@ from trafik_isigi_kontrol import (
 # TEST MODU: ÖNCELİKLİ SİSTEM VE UÇ SENARYO TESTİ
 # Ambulans algılandığında trafik ışıkları kontrol edilir.
 
+# 7. HAFTA - SENARYO SEÇİMİ
+# NORMAL: Normal trafik + ambulans
+# KUYRUK: Ek araç kuyruğu + ambulans
+# AMBULANSSIZ: Yalnızca normal trafik
+SENARYO = "NORMAL"
+
 # Ambulans bilgileri
 ambulanslar = ["ambulance_w_e"]
 algilanan_ambulanslar = set()
@@ -40,12 +46,16 @@ try:
 
         # Simülasyonu bir adım ilerlet
         traci.simulationStep()
+        if SENARYO == "AMBULANSSIZ":
+            if "ambulance_w_e" in traci.vehicle.getIDList():
+             traci.vehicle.remove("ambulance_w_e")
+
 
         # =========================================================================
         # ZEHRA ASEL - UÇ SENARYO & KAVŞAK TIKANIKLIĞI TESTİ (GRIDLOCK TEST)
         # 10. adımda ambulansın bulunduğu yola (-E3 -> E0) araç kuyruğu ekler.
         # =========================================================================
-        if adim == 10:
+        if adim == 10  and SENARYO == "KUYRUK":
             print("\n🚨 [ZEHRA - UÇ SENARYO TESTİ] Ambulansın önüne araç kuyruğu yığılıyor...")
             
             # Doğru rota olan -E3 -> E0 rotasını SUMO'ya tanımlıyoruz
@@ -104,13 +114,16 @@ try:
             # Ambulansın konum ve hız bilgileri
             bilgi = ambulans_bilgisi(ambulans_id)
 
-        # ÖNCELİKLİ TRAFİK IŞIĞI KONTROLÜ
-        # Her simülasyon adımında çalışır
-        asama = oncelik_sistemini_guncelle(
-            bilgi,
-            ambulans_id
-        )
-
+        # 7. HAFTA - SENARYOYA GÖRE TRAFİK IŞIĞI KONTROLÜ
+        if SENARYO == "AMBULANSSIZ":
+        # Ambulans yoksa normal sinyalizasyon çalışır
+         asama = "NORMAL"
+        else:
+        # Ambulans varsa öncelik algoritması çalışır
+         asama = oncelik_sistemini_guncelle(
+        bilgi,
+        ambulans_id
+    )
         # Ambulansın çıkış zamanını kaydet
         if (
             ambulans_id in araclar
@@ -196,6 +209,12 @@ finally:
 
 
 # TEST SONUÇLARI
+
+
+# 7. HAFTA - SENARYO SONUCU
+print("\n===== 7. HAFTA SENARYO TESTİ =====")
+print(f"Çalıştırılan senaryo: {SENARYO}")
+
 print("\n===== ÖNCELİKLİ SİMÜLASYON ÖZETİ =====")
 
 if "ambulance_w_e" in algilanan_ambulanslar:
