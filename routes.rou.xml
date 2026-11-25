@@ -1,4 +1,3 @@
-
 <routes>
 
     <!-- NORMAL ARAÇ TİPİ -->
@@ -27,7 +26,7 @@
           type="car"
           begin="0"
           end="1000"
-          probability="0.25">
+          probability="0.20">
         <route edges="-E3 E0"/>
     </flow>
 
@@ -36,7 +35,7 @@
           type="car"
           begin="0"
           end="1000"
-          probability="0.25">
+          probability="0.20">
         <route edges="-E0 E3"/>
     </flow>
 
@@ -58,13 +57,34 @@
         <route edges="-E2 E1"/>
     </flow>
 
-    <!-- TEK AMBULANS SENARYOSU -->
+    <!-- 4 YÖNLÜ AMBULANS SENARYOSU -->
 
-    <!-- Batıdan gelip Doğuya giden ambulans -->
+    <!-- 1. Batıdan gelip Doğuya giden ambulans -->
     <vehicle id="ambulance_w_e"
              type="ambulance"
-             depart="20">
+             depart="15">
         <route edges="-E3 E0"/>
+    </vehicle>
+
+    <!-- 2. Kuzeyden gelip Güneye giden ambulans -->
+    <vehicle id="ambulance_n_s"
+             type="ambulance"
+             depart="60">
+        <route edges="-E1 E2"/>
+    </vehicle>
+
+    <!-- 3. Doğudan gelip Batıya giden ambulans -->
+    <vehicle id="ambulance_e_w"
+             type="ambulance"
+             depart="105">
+        <route edges="-E0 E3"/>
+    </vehicle>
+
+    <!-- 4. Güneyden gelip Kuzeye giden ambulans -->
+    <vehicle id="ambulance_s_n"
+             type="ambulance"
+             depart="150">
+        <route edges="-E2 E1"/>
     </vehicle>
 
 </routes>
